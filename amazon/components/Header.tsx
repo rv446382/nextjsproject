@@ -37,8 +37,8 @@ const Header = () => {
     return (
         <>
             {/* Top section of the header */}
-            <div className='bg-[#131921] text-white py-1'>
-                <div className='flex items-center justify-between w-[100%] mx-auto'>
+            <div className='bg-[#131921] text-white py-1 relative'>
+                <div className='flex items-center justify-between w-[95%] mx-auto'>
                     {/* Logo */}
                     <Link href={'/'} className='w-[20%] md:w-[10%]'>
                         <Image 
@@ -105,7 +105,7 @@ const Header = () => {
             </div>
 
             {/* Menu icon for mobile screens */}
-            <div className='flex justify-between items-center bg-[#232F3E] p-2 md:hidden'>
+            <div className='relative flex justify-between items-center bg-[#232F3E] p-2 md:hidden'>
                 <button onClick={() => setMenuOpen(!menuOpen)} className="text-white">
                     <IoMdMenu size={"30px"} />
                 </button>
