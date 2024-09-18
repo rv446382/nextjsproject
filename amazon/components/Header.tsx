@@ -7,6 +7,9 @@ import { CgSearch } from "react-icons/cg";
 import Link from 'next/link';
 import { IoMdMenu } from "react-icons/io";
 import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/lib/supabase/hooks/redux';
+import { getCart } from '@/redux/cartSlice';
+
 
 const itemList = [
     "All",
@@ -26,7 +29,7 @@ const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false); // State for menu toggle
     const [query,setQuery]=useState<string>("");
     const router = useRouter();
-
+    const cart = useAppSelector(getCart);
 //search functionality
     const searchHandler=()=>{
      router.push(`/search/${query}`);
@@ -97,6 +100,7 @@ const Header = () => {
 
                         {/* Cart */}
                         <Link href={"/cart"} className='flex items-center cursor-pointer'>
+                            <p className='relative top-3 left-5'>{cart.length}</p>
                             <BiCart size={"24px"} className="md:w-[40px]" /> {/* Smaller icon for mobile */}
                             <h1 className='hidden md:block ml-2'>Cart</h1> {/* Hide text on mobile */}
                         </Link>
