@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/lib/supabase/hooks/redux';
 import { getCart } from '@/redux/cartSlice';
 
-
 const itemList = [
     "All",
     "Fresh",
@@ -27,15 +26,14 @@ const itemList = [
 
 const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false); // State for menu toggle
-    const [query,setQuery]=useState<string>("");
+    const [query, setQuery] = useState<string>("");
     const router = useRouter();
     const cart = useAppSelector(getCart);
-//search functionality
-    const searchHandler=()=>{
-     router.push(`/search/${query}`);
+
+    // Search functionality
+    const searchHandler = () => {
+        router.push(`/search/${query}`);
     };
-
-
 
     return (
         <>
@@ -60,7 +58,7 @@ const Header = () => {
                             {/* Search input field */}
                             <input
                                 value={query}
-                                onChange={(e)=>setQuery(e.target.value)}
+                                onChange={(e) => setQuery(e.target.value)}
                                 type="text"
                                 className='w-full p-1 md:p-2 outline-none text-black h-[30px] md:h-[40px] rounded-l-md'
                                 placeholder='Search Amazon.in'
@@ -71,9 +69,10 @@ const Header = () => {
                                 className='bg-[#FEBD69] p-2 cursor-pointer hover:bg-[#ffad43] flex items-center justify-center rounded-r-md h-[30px] md:h-[40px]'
                             >
                                 <CgSearch
-                                onClick={searchHandler}
-                                 size={"24px"} 
-                                 className='text-black' />
+                                    onClick={searchHandler}
+                                    size={"24px"} 
+                                    className='text-black' 
+                                />
                             </div>
                         </div>
                     </div>
@@ -99,8 +98,13 @@ const Header = () => {
                         </div>
 
                         {/* Cart */}
-                        <Link href={"/cart"} className='flex items-center cursor-pointer'>
-                            <p className='relative top-3 left-5'>{cart.length}</p>
+                        <Link href={"/cart"} className='flex items-center cursor-pointer relative'>
+                            {/* Cart Items Count Circle */}
+                            {cart.length > 0 && (
+                                <span className='absolute top-0 bottom-5 right-10 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+                                    {cart.length}
+                                </span>
+                            )}
                             <BiCart size={"24px"} className="md:w-[40px]" /> {/* Smaller icon for mobile */}
                             <h1 className='hidden md:block ml-2'>Cart</h1> {/* Hide text on mobile */}
                         </Link>
@@ -147,11 +151,9 @@ const Header = () => {
                         Sign out
                     </h1>
                 </div>
-
-                
             </div>
         </>
-    )
+    );
 }
 
-export default Header
+export default Header;
