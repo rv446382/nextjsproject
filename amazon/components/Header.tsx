@@ -1,6 +1,6 @@
 "use client"
 import Image from 'next/image'
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import amazonLogo from "../public/amazon-logo-2.webp";
 import { BiCart } from "react-icons/bi";
 import { CgSearch } from "react-icons/cg";
@@ -9,6 +9,7 @@ import { IoMdMenu } from "react-icons/io";
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/lib/supabase/hooks/redux';
 import { getCart } from '@/redux/cartSlice';
+import { supabase } from '@/lib/supabase/products';
 
 const itemList = [
     "All",
@@ -27,6 +28,7 @@ const itemList = [
 const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false); // State for menu toggle
     const [query, setQuery] = useState<string>("");
+    const [user,setUser]=useState<any>(null);
     const router = useRouter();
     const cart = useAppSelector(getCart);
 
@@ -35,6 +37,14 @@ const Header = () => {
         router.push(`/search/${query}`);
     };
 
+    useEffect(()=>{
+        const getUserData = async () => {
+            const {data:{user}} = await supabase.auth.getUser()
+            setUser(user);
+        }
+        getUserData();
+    },[]);
+    console.log(user,"userfor authentication");
     return (
         <>
             {/* Top section of the header */}
@@ -80,13 +90,17 @@ const Header = () => {
                     {/* Account and cart options */}
                     <div className='flex items-center justify-around w-[30%] md:w-[20%]'>
                         {/* Account & Lists */}
-                        <div className='cursor-pointer'>
-                            <h1 className='text-xs md:text-sm hover:underline'>
-                                <span className='block md:hidden'>SignIn</span> 
-                                <span className='hidden md:block'>Hello, Sign in</span>
-                            </h1>
-                            <h1 className='font-medium text-sm hidden md:block'>Account & Lists</h1>
-                        </div>
+                        <div className='cursor-pointer' onClick={() => router.push("/signin")}>
+    <h1 className='text-xs md:text-sm hover:underline'>
+        {/* Username for mobile */}
+        <span className='block md:hidden'>{user ? user?.identities[0]?.identity_data.full_name : "Signin"}</span>
+        {/* Username for laptop */}
+        <span className='hidden md:block'>{user ? `${user?.identities[0]?.identity_data.full_name}` : "Hello, Sign in"}</span>
+    </h1>
+    <h1 className='font-medium text-sm hidden md:block'>Account & Lists</h1>
+</div>
+
+
 
                         {/* Returns & Orders */}
                         <div>
