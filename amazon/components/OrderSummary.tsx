@@ -1,6 +1,35 @@
+import { loadStripe } from '@stripe/stripe-js';
 import React from 'react';
+import axios from "axios";
+import { supabase } from '@/lib/supabase/products';
+import { useAppSelector } from '@/lib/supabase/hooks/redux';
+import { getCart } from '@/redux/cartSlice';
+ 
 
-const OrderSummary = ({ totalPrice }:{totalPrice:any}) => {
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISH_KEY!);
+
+const OrderSummary = ({totalPrice}:{totalPrice:number}) => { 
+  const cart = useAppSelector(getCart)
+  
+  const createStripeSession = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    const stripe = await stripePromise;
+    // 
+    const checkoutSession = await axios.post("/api/checkout-sessions", {
+      items: cart,
+      email: user?.email
+    });
+ 
+    // redirect to checkout session
+    const result = await stripe?.redirectToCheckout({
+      sessionId:checkoutSession.data.id,
+    })
+
+    if(result?.error){
+      console.log(result.error.message);
+    }
+  }
+
   return (
     <div className='border border-gray p-4 mt-5 h-fit'>
       <div>
@@ -27,10 +56,10 @@ const OrderSummary = ({ totalPrice }:{totalPrice:any}) => {
             <h1>${totalPrice}</h1>
           </div>
         </div>
-        <button className='bg-[#FFD814] w-full rounded-md px-4 py-1 my-3'>Place Your Order Now</button>
+        <button onClick={createStripeSession} className='bg-[#FFD814] w-full rounded-md px-4 py-1 my-3'>Place Your Order Now</button>
       </div>
     </div>
   )
 }
 
-export default OrderSummary;
+export default OrderSummary
